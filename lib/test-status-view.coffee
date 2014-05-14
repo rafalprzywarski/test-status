@@ -34,6 +34,7 @@ class TestStatusView extends View
         .replace(/>/g, '&gt;')
       )
     @testStatusOutput.html("<pre>#{@output.trim()}</pre>")
+    @testStatusOutput.scrollTop(@testStatusOutput[0].scrollHeight)
 
   # Internal: Detach and destroy the test-status output view.
   #
