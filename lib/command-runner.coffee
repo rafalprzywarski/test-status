@@ -3,7 +3,10 @@ path    = require 'path'
 
 glob    = require 'glob'
 
+CommandRunnerConfiguration = require './command-runner-configuration'
+
 module.exports =
+
 # Internal: Finds the correct test command to run based on what "file" it can
 # find in the project root.
 class CommandRunner
@@ -22,38 +25,32 @@ class CommandRunner
     return unless atom.project.path?
 
     cfg = atom.config.get('test-status')
-    cmd = null
+    @configuration = new CommandRunnerConfiguration(cfg)
 
-    for file in Object.keys(cfg)
-      pattern = path.join(atom.project.path, file)
-      matches = glob.sync(pattern)
-
-      if matches.length > 0
-        cmd = cfg[file]
-        break
-
-    return unless cmd
-    @execute(cmd)
+    return unless @configuration.buildCommand
+    @execute()
 
   # Internal: Execute the command and render the output.
   #
   # cmd - A string of the command to run, including arguments.
   #
   # Returns nothing.
-  execute: (cmd) ->
+  execute: ->
     @testStatus.removeClass('success fail').addClass('pending')
 
-    cmd = cmd.split(' ')
+    cmd = @configuration.buildCommand.split(' ')
 
     try
       proc = spawn(cmd.shift(), cmd, cwd: atom.project.path)
       output = ''
 
-      proc.stdout.on 'data', (data) ->
+      proc.stdout.on 'data', (data) =>
         output += data.toString()
+        @testStatusView.update(output) if @configuration.hasLiveUpdate()
 
-      proc.stderr.on 'data', (data) ->
+      proc.stderr.on 'data', (data) =>
         output += data.toString()
+        @testStatusView.update(output) if @configuration.hasLiveUpdate()
 
       proc.on 'close', (code) =>
         @testStatusView.update(output)

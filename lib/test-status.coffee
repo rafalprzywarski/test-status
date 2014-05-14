@@ -18,6 +18,7 @@ module.exports =
       'deft-package.json': 'deft test'
       '*_test.go':         'go test -v .'
       'phpunit.xml':       'phpunit'
+      'live-output':       false
     })
 
     createStatusEntry = =>
