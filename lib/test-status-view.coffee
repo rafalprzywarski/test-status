@@ -29,9 +29,11 @@ class TestStatusView extends View
       do (link) =>
         @testStatusOutput.find("a:contains('#{link}')").click(() =>
           pathAndLine = link.split(":")
+          row = parseInt(pathAndLine[1], 10) - 1
+          column = parseInt(pathAndLine[2], 10) - 1 if pathAndLine[2]
           p = atom.workspace.open(pathAndLine[0])
           p.then((editor) =>
-            editor.setCursorBufferPosition([parseInt(pathAndLine[1], 10) - 1, 0])))
+            editor.setCursorBufferPosition([row, column])))
 
   # Internal: Update the test-status output view contents.
   #
