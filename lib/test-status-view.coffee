@@ -20,21 +20,37 @@ class TestStatusView extends View
     atom.workspaceView.command "test-status:toggle-output", =>
       @toggle()
 
+  createFileLink: (fileLine, links) ->
+    fileLine = fileLine.split(":")
+    links.push fileLine
+    return "<a href='#' style='color: lightblue'>#{fileLine[0]}:#{fileLine[1]}</a>";
+
+  attachLinks: (links) ->
+    for link in links
+      do (link) =>
+        @testStatusOutput.find("a:contains('#{link[0]}')").click(() =>
+          p = atom.workspace.open(link[0])
+          p.then((editor) =>
+            editor.setCursorBufferPosition([parseInt(link[1], 10) - 1, 0])))
+
   # Internal: Update the test-status output view contents.
   #
   # output - A string of the test runner results.
   #
   # Returns nothing.
   update: (output) ->
-    @convert ?= new Convert
+    @convert ?= new Convert({newline: true})
+    links = []
     @output = @convert.toHtml(
       output.replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
+        .replace(/([\.\/]?\/?([\w\.]+\/)+[\w\.]+):(\d+)(:\d+)?/g, (match) => @createFileLink(match, links))
       )
     @testStatusOutput.html("<pre>#{@output.trim()}</pre>")
     @testStatusOutput.scrollTop(@testStatusOutput[0].scrollHeight)
+    @attachLinks(links)
 
   # Internal: Detach and destroy the test-status output view.
   #
