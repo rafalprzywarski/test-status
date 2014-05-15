@@ -46,7 +46,7 @@ class TestStatusView extends View
         .replace(/"/g, '&quot;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/([\.\/]?\/?([\w\.]+\/)+[\w\.]+):(\d+)(:\d+)?/g, (match) => @createFileLink(match, links))
+        .replace(/([\.\/]?\/?([\w\.\+]+\/)+[\w\.\+]+):(\d+)(:\d+)?/g, (match) => @createFileLink(match, links))
       )
     @testStatusOutput.html("<pre>#{@output.trim()}</pre>")
     @testStatusOutput.scrollTop(@testStatusOutput[0].scrollHeight)
