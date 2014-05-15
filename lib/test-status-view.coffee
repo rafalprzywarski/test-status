@@ -21,17 +21,17 @@ class TestStatusView extends View
       @toggle()
 
   createFileLink: (fileLine, links) ->
-    fileLine = fileLine.split(":")
     links.push fileLine
-    return "<a href='#' style='color: lightblue'>#{fileLine[0]}:#{fileLine[1]}</a>";
+    return "<a href='#' style='color: lightblue'>#{fileLine}</a>";
 
   attachLinks: (links) ->
     for link in links
       do (link) =>
-        @testStatusOutput.find("a:contains('#{link[0]}')").click(() =>
-          p = atom.workspace.open(link[0])
+        @testStatusOutput.find("a:contains('#{link}')").click(() =>
+          pathAndLine = link.split(":")
+          p = atom.workspace.open(pathAndLine[0])
           p.then((editor) =>
-            editor.setCursorBufferPosition([parseInt(link[1], 10) - 1, 0])))
+            editor.setCursorBufferPosition([parseInt(pathAndLine[1], 10) - 1, 0])))
 
   # Internal: Update the test-status output view contents.
   #
