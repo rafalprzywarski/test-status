@@ -3,6 +3,12 @@ glob = require 'glob'
 
 module.exports =
 
+# Internal: Describes the package configuration.
+#
+# Properties:
+#
+# hasLiveUpdate: has live update of executed command output
+# buildCommand: build command for the current project
 class CommandRunnerConfiguration
   constructor: (@cfg) ->
     @buildCommand = null
