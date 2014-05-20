@@ -1,5 +1,5 @@
-path    = require 'path'
-glob    = require 'glob'
+path = require 'path'
+glob = require 'glob'
 
 module.exports =
 
@@ -9,16 +9,16 @@ class CommandRunnerConfiguration
     @parseConfiguration(cfg)
 
   hasLiveUpdate: ->
-    return @cfg['live-update'] == true
+    @cfg['live-update'] is true
 
   isOption: (key) ->
-    return key == 'live-update'
+    key is 'live-update'
 
   matchBuildCommand: (file) ->
     pattern = path.join(atom.project.path, file)
     matches = glob.sync(pattern)
-    return null if matches.length == 0
-    return @cfg[file]
+    return null if matches.length is 0
+    @cfg[file]
 
   parseConfiguration: ->
     for key in Object.keys(@cfg)
