@@ -22,7 +22,7 @@ class TestStatusView extends View
 
   createFileLink: (fileLine, links) ->
     links.push fileLine
-    return "<a href='#' style='color: lightblue'>#{fileLine}</a>";
+    return "<a href='#'>#{fileLine}</a>";
 
   attachLinks: (links) ->
     for link in links
