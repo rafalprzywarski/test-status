@@ -46,11 +46,11 @@ class CommandRunner
 
       proc.stdout.on 'data', (data) =>
         output += data.toString()
-        @testStatusView.update(output) if @configuration.hasLiveUpdate()
+        @testStatusView.update(output)
 
       proc.stderr.on 'data', (data) =>
         output += data.toString()
-        @testStatusView.update(output) if @configuration.hasLiveUpdate()
+        @testStatusView.update(output)
 
       proc.on 'close', (code) =>
         @testStatusView.update(output)
