@@ -9,15 +9,24 @@ module.exports =
   # Returns nothing.
   activate: ->
     atom.config.setDefaults('test-status', {
-      'test/**/*_test.rb': 'rake test',
-      'spec/**/*_spec.rb': 'rake spec',
-      'Gruntfile.*':       'grunt test'
-      'gulpfile.*':        'gulp test'
+      'Makefile':          'make test'
       'script/test':       'script/test'
       'script/cibuild':    'script/cibuild'
+
+      'test/**/*_test.rb': 'rake test',
+      'spec/**/*_spec.rb': 'rake spec',
+
+      'Gruntfile.*':       'grunt test'
+      'gulpfile.*':        'gulp test'
+      'test/mocha.opts':   'mocha'
+
       'deft-package.json': 'deft test'
+
       '*_test.go':         'go test -v .'
+
       'phpunit.xml':       'phpunit'
+
+      'setup.py':          'python setup.py test'
     })
 
     createStatusEntry = =>

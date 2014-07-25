@@ -18,16 +18,8 @@ command `rake test` will be run or if you have a `Gruntfile` in your project
 root then `grunt test` will be run. The priority of which command is executed is
 determined by the order the mappings are defined in your configuration.
 
-By default, the following files are mapped to the commands:
-
-  * `test/**/*_test.rb` &rarr; `rake test`
-  * `spec/**/*_spec.rb` &rarr; `rake spec`
-  * `Gruntfile.*` &rarr; `grunt test`
-  * `script/test` &rarr; `script/test`
-  * `script/cibuild` &rarr; `script/cibuild`
-  * `deft-package.json` &rarr; `deft test` (Open Dylan)
-  * `*_test.go` &rarr; `go test -v .`
-  * `phpunit.xml` &rarr; `phpunit`
+By default, the [following files](./lib/test-status.coffee#L11) are mapped to
+the commands.
 
 When your command is running the Hubot face in the status bar will turn orange.
 If the command exits with 0 the Hubot face will turn green. Exiting with a
