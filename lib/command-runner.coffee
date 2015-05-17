@@ -1,9 +1,11 @@
 path    = require 'path'
 {spawn} = require 'child_process'
 
-glob    = require 'glob'
+glob = require 'glob'
 
 CommandRunnerConfiguration = require './command-runner-configuration'
+
+config = require './config'
 
 module.exports =
 
@@ -22,26 +24,40 @@ class CommandRunner
   #
   # Returns nothing.
   run: ->
-    return unless atom.project.path?
+    projPath = atom.project.getPaths()[0]
+    return unless projPath
 
-    cfg = atom.config.get('test-status')
+    cfg = config.readOrInitConfig()
+    cmd = null
     @configuration = new CommandRunnerConfiguration(cfg)
 
     return unless @configuration.buildCommand
-    @execute()
+    for file in Object.keys(cfg)
+      pattern = path.join(projPath, file)
+      matches = glob.sync(pattern)
+
+      if matches.length > 0
+        cmd = cfg[file]
+        break
+
+    return unless cmd
+    @execute(cmd)
 
   # Internal: Execute the command and render the output.
   #
   # cmd - A string of the command to run, including arguments.
   #
   # Returns nothing.
-  execute: ->
+  execute: (cmd) ->
+    return if @running
+    @running = true
+
     @testStatus.removeClass('success fail').addClass('pending')
 
-    cmd = @configuration.buildCommand.split(' ')
-
     try
-      proc = spawn(cmd.shift(), cmd, cwd: atom.project.path)
+      cwd = atom.project.getPaths()[0]
+      proc = spawn("#{process.env.SHELL}", ["-i", "-c", cmd], cwd: cwd)
+
       output = ''
 
       proc.stdout.on 'data', (data) =>
@@ -53,6 +69,7 @@ class CommandRunner
         @testStatusView.update(output)
 
       proc.on 'close', (code) =>
+        @running = false
         @testStatusView.update(output)
 
         if code is 0
@@ -62,5 +79,6 @@ class CommandRunner
           atom.emit 'test-status:fail'
           @testStatus.removeClass('pending success').addClass('fail')
     catch err
+      @running = false
       @testStatus.removeClass('pending success').addClass('fail')
       @testStatusView.update('An error occured while attempting to run the test command')

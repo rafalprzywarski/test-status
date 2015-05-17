@@ -1,4 +1,4 @@
-{View}  = require 'atom'
+{View} = require 'atom-space-pen-views'
 
 Convert = require 'ansi-to-html'
 
@@ -15,10 +15,10 @@ class TestStatusView extends View
   # Internal: Initialize the test-status output view and event handlers.
   initialize: ->
     @output = "<strong>No output</strong>"
-    @testStatusOutput.html(@output).css('font-size', "#{atom.config.getInt('editor.fontSize')}px")
+    @testStatusOutput.html(@output).css('font-size', "#{atom.config.get('editor.fontSize')}px")
 
-    atom.workspaceView.command "test-status:toggle-output", =>
-      @toggle()
+    atom.commands.add 'atom-workspace',
+      'test-status:toggle-output': => @toggle()
 
   createFileLink: (fileLine, links) ->
     links.push fileLine
@@ -67,4 +67,4 @@ class TestStatusView extends View
     if @hasParent()
       @detach()
     else
-      atom.workspaceView.prependToBottom(this) unless @hasParent()
+      atom.workspace.addBottomPanel(item: this)
