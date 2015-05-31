@@ -28,20 +28,10 @@ class CommandRunner
     return unless projPath
 
     cfg = config.readOrInitConfig()
-    cmd = null
     @configuration = new CommandRunnerConfiguration(cfg)
 
     return unless @configuration.buildCommand
-    for file in Object.keys(cfg)
-      pattern = path.join(projPath, file)
-      matches = glob.sync(pattern)
-
-      if matches.length > 0
-        cmd = cfg[file]
-        break
-
-    return unless cmd
-    @execute(cmd)
+    @execute(@configuration.buildCommand)
 
   # Internal: Execute the command and render the output.
   #

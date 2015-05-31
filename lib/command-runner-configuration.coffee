@@ -14,7 +14,7 @@ class CommandRunnerConfiguration
     @parseConfiguration(cfg)
 
   matchBuildCommand: (file) ->
-    pattern = path.join(atom.project.path, file)
+    pattern = path.join(atom.project.getPaths()[0], file)
     matches = glob.sync(pattern)
     return null if matches.length is 0
     @cfg[file]

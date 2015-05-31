@@ -18,18 +18,10 @@ class TestStatusStatusBarView extends View
     @commandRunner = new CommandRunner(@testStatus, @testStatusView)
     @attach()
 
-    @initialSub   = true
-    @editorSub    = null
     @statusBarSub = atom.workspace.observeTextEditors (editor) =>
-      # On the initial run, only subscribe to the active text editor.
-      # There is technically no active on subsequent firings of this observer.
-      # If atom introduces an observeActiveTextEditor, that'd be ideal to use here.
-      if @initialSub
-        return unless editor == atom.workspace.getActiveTextEditor()
-        @initialSub = false
 
-      @editorSub?.dispose()
-      @editorSub = editor.onDidSave =>
+      # TODO: add unsubscription
+      editor.onDidSave =>
         return unless atom.config.get('test-status.autorun')
         @commandRunner.run()
 
@@ -54,8 +46,9 @@ class TestStatusStatusBarView extends View
 
     @statusBarSub.dispose()
     @statusBarSub = null
-    @editorSub.dispose()
-    @editorSub = null
+    for sub in Object.keys(@editorSubs)
+      sub.dispose()
+    @editorSubs.clear
 
     @detach()
 
