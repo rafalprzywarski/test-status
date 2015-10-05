@@ -1,4 +1,5 @@
 {View} = require 'atom-space-pen-views'
+{CompositeDisposable} = require 'atom'
 
 TestStatusView = require './test-status-view'
 CommandRunner  = require './command-runner'
@@ -18,15 +19,12 @@ class TestStatusStatusBarView extends View
     @commandRunner = new CommandRunner(@testStatus, @testStatusView)
     @attach()
 
+    @subscriptions = new CompositeDisposable
     @statusBarSub = atom.workspace.observeTextEditors (editor) =>
+        @subscriptions.add editor.onDidSave =>
+            @commandRunner.run()
 
-      # TODO: add unsubscription
-      editor.onDidSave =>
-        return unless atom.config.get('test-status.autorun')
-        @commandRunner.run()
-
-    atom.commands.add 'atom-workspace',
-      'test-status:run-tests': => @commandRunner.run()
+    atom.commands.add 'atom-workspace', 'test-status:run-tests': => @commandRunner.run()
 
   # Internal: Attach the status bar view to the status bar.
   #
@@ -46,9 +44,9 @@ class TestStatusStatusBarView extends View
 
     @statusBarSub.dispose()
     @statusBarSub = null
-    for sub in Object.keys(@editorSubs)
-      sub.dispose()
-    @editorSubs.clear
+
+    @subscriptions.dispose()
+    @subscriptions = null
 
     @detach()
 

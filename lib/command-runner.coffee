@@ -1,5 +1,6 @@
 path    = require 'path'
 {spawn} = require 'child_process'
+{Emitter} = require 'atom'
 
 glob = require 'glob'
 
@@ -19,6 +20,7 @@ class CommandRunner
   # @testStatus - A space-pen outlet for the test status icon element.
   # @testStatusView - A space-pen view for the test status output element.
   constructor: (@testStatus, @testStatusView) ->
+      @emitter = new Emitter
 
   # Internal: Run the test command based on configuration priority.
   #
@@ -63,10 +65,10 @@ class CommandRunner
         @testStatusView.update(output)
 
         if code is 0
-          atom.emit 'test-status:success'
+          @emitter.emit 'test-status:success'
           @testStatus.removeClass('pending fail').addClass('success')
         else
-          atom.emit 'test-status:fail'
+          @emitter.emit 'test-status:fail'
           @testStatus.removeClass('pending success').addClass('fail')
     catch err
       @running = false
