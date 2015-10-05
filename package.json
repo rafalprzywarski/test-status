@@ -1,7 +1,7 @@
 {
   "name": "test-status",
   "main": "./lib/test-status",
-  "version": "0.30.0",
+  "version": "0.35.0",
   "description": "Adds the status of your testing command to the status bar",
   "repository": "https://github.com/tombell/test-status",
   "license": "MIT",
