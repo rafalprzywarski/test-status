@@ -23,6 +23,10 @@ class TestStatusView extends View
   createFileLink: (fileLine, links) ->
     links.push fileLine
     return "<a href='#'>#{fileLine}</a>";
+  removeDuplicates = (a) ->
+    res = {}
+    res[a[index]] = a[index] for index in [0..a.length-1]
+    value for index, value of res
 
   attachLinks: (links) ->
     for link in links
@@ -50,6 +54,7 @@ class TestStatusView extends View
         .replace(/>/g, '&gt;')
         .replace(/([\.\/]?\/?([\w\.\+]+\/)+[\w\.\+]+):(\d+)(:\d+)?/g, (match) => @createFileLink(match, links))
       )
+    links = removeDuplicates(links)
     @testStatusOutput.html("<pre>#{@output.trim()}</pre>")
     @testStatusOutput.scrollTop(@testStatusOutput[0].scrollHeight)
     @attachLinks(links)
