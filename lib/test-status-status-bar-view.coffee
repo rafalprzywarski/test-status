@@ -11,7 +11,7 @@ class TestStatusStatusBarView extends View
   # Internal: Initialize test-status status bar view DOM contents.
   @content: ->
     @div click: 'toggleTestStatusView', class: 'inline-block', =>
-      @span outlet:  'testStatus', class: 'test-status icon icon-hubot', tabindex: -1, ''
+      @span outlet:  'testStatus', class: 'test-status icon icon-checklist', tabindex: -1, ''
 
   # Internal: Initialize the status bar view and event handlers.
   initialize: ->
