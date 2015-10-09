@@ -9,6 +9,7 @@ class TestStatusView extends View
   # Internal: Initialize test-status output view DOM contents.
   @content: ->
     @div tabIndex: -1, class: 'test-status-output tool-panel panel-bottom padded native-key-bindings', =>
+      @div class: 'test-status icon icon-x fail hidden', outlet: 'killTestIcon', click: 'killTest'
       @div class: 'block', =>
         @div class: 'message', outlet: 'testStatusOutput'
 
@@ -73,3 +74,16 @@ class TestStatusView extends View
       @detach()
     else
       atom.workspace.addBottomPanel(item: this)
+
+  killTest: ->
+    @killTestIcon.addClass('hidden')
+    @commandRunner.killProcess()
+
+  showKillIcon: ->
+    @killTestIcon.removeClass('hidden')
+
+  hideKillIcon: ->
+    @killTestIcon.addClass('hidden')
+
+  setCommandRunner: (commandRunner) ->
+    @commandRunner = commandRunner

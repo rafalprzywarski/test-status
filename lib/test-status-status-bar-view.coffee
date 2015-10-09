@@ -17,6 +17,7 @@ class TestStatusStatusBarView extends View
   initialize: ->
     @testStatusView = new TestStatusView
     @commandRunner = new CommandRunner(@testStatus, @testStatusView)
+    @testStatusView.setCommandRunner(@commandRunner)
     @attach()
 
     @subscriptions = new CompositeDisposable

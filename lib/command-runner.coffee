@@ -35,33 +35,39 @@ class CommandRunner
     return unless @configuration.buildCommand
     @execute(@configuration.buildCommand)
 
+  killProcess: ->
+    return if not @proc
+    @proc.kill('SIGKILL')
+
   # Internal: Execute the command and render the output.
   #
   # cmd - A string of the command to run, including arguments.
   #
   # Returns nothing.
   execute: (cmd) ->
-    return if @running
+    return if @proc
     @running = true
 
     @testStatus.removeClass('success fail').addClass('pending')
 
     try
       cwd = atom.project.getPaths()[0]
-      proc = spawn("#{process.env.SHELL}", ["-i", "-c", cmd], cwd: cwd)
+      @proc = spawn("#{process.env.SHELL}", ["-i", "-c", cmd], cwd: cwd)
+      @testStatusView.showKillIcon()
 
       output = ''
 
-      proc.stdout.on 'data', (data) =>
+      @proc.stdout.on 'data', (data) =>
         output += data.toString()
         @testStatusView.update(output)
 
-      proc.stderr.on 'data', (data) =>
+      @proc.stderr.on 'data', (data) =>
         output += data.toString()
         @testStatusView.update(output)
 
-      proc.on 'close', (code) =>
-        @running = false
+      @proc.on 'close', (code) =>
+        @proc = null
+        @testStatusView.hideKillIcon()
         @testStatusView.update(output)
 
         if code is 0
@@ -71,6 +77,6 @@ class CommandRunner
           @emitter.emit 'test-status:fail'
           @testStatus.removeClass('pending success').addClass('fail')
     catch err
-      @running = false
+      @proc = null
       @testStatus.removeClass('pending success').addClass('fail')
       @testStatusView.update('An error occured while attempting to run the test command')
