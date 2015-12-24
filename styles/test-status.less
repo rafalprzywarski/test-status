@@ -14,9 +14,14 @@
   }
 }
 
+@keyframes pulse {
+  50% { opacity: 0.75; }
+}
+
 .test-status {
   &.pending {
     color: @text-color-warning;
+    animation: pulse 1.2s linear infinite;
   }
 
   &.success {
